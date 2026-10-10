@@ -13,9 +13,12 @@ def variants(title, attributes=None):
         m = re.search(pattern, t)
         if m: out[key] = m.group(1)+m.group(2) if key == 'storage' else m.group(1)
     # A single unqualified capacity is storage, while multiple capacities stay uncertain.
-    capacities = re.findall(r'\b(\d+)\s*(gb|tb)\b', t)
-    if 'storage' not in out and len(capacities) == 1 and 'ram' not in out:
+    capacity_text=re.sub(r'\b\d+\s*gb\s*ram\b','',t)
+    capacities = re.findall(r'\b(\d+)\s*(gb|tb)\b', capacity_text)
+    if 'storage' not in out and len(capacities) == 1 :
         out['storage'] = ''.join(capacities[0])
+    dimensions=re.search(r'\b\d+(?:\.\d+)?\s*[x×]\s*\d+(?:\.\d+)?\s*(?:cm|mm)\b',t)
+    if dimensions:out['size']=re.sub(r'\s+','',dimensions.group(0))
     for c in ('black', 'white', 'blue', 'green', 'red', 'pink', 'silver', 'gold', 'grey', 'gray', 'beige', 'brown'):
         if re.search(r'\b'+c+r'\b', t): out['colour'] = 'grey' if c == 'gray' else c
     for k, v in (attributes or {}).items():

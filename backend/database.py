@@ -13,7 +13,8 @@ class Database:
         self.path = str(path); Path(self.path).parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as c:
             c.execute('PRAGMA journal_mode=WAL')
-            c.executescript((Path(__file__).parent/'migrations/001_initial.sql').read_text())
+            for migration in sorted((Path(__file__).parent/'migrations').glob('*.sql')):
+                c.executescript(migration.read_text())
             for k,cls in REGISTRY.items(): c.execute('INSERT OR IGNORE INTO platforms(id,name) VALUES (?,?)',(k,cls.name))
     @contextmanager
     def connect(self):

@@ -74,7 +74,9 @@ class Handler(BaseHTTPRequestHandler):
                         ids=[db.register(o) for o in observations]
                         return {'platform':cls.key,'status':'available' if ids else 'no_verified_results','listing_ids':ids,'errors':errors}
                     except CollectionError as e:
-                        db.failure(cls.key,e);return {'platform':cls.key,'status':e.code,'message':str(e)}
+                        with db.connect() as c:
+                            existing=c.execute('SELECT id FROM listings WHERE platform_id=? AND url=?',(cls.key,query)).fetchone() if query.startswith('https://') else None
+                        db.failure(cls.key,e,existing['id'] if existing else None);return {'platform':cls.key,'status':e.code,'message':str(e)}
                     except Exception as e:
                         error=CollectionError('internal',str(e),True);db.failure(cls.key,error);return {'platform':cls.key,'status':'internal','message':'Collector failed; see source status'}
                 classes=[type(connector_for(query))] if query.startswith('https://') else list(REGISTRY.values())
@@ -86,6 +88,11 @@ class Handler(BaseHTTPRequestHandler):
                 rows=db.listings('' if query.startswith('https://') else query)
                 if query.startswith('https://'): rows=[l for l in rows if l['url']==query]
                 result={'sources':status,'listings':rows}
+            elif key=='imports' and self.command=='GET':
+                with db.connect() as c:
+                    source_url=qs.get('url',[''])[0]
+                    rows=c.execute('SELECT * FROM sourced_history WHERE product_url=? ORDER BY observed_at_reported' if source_url else 'SELECT * FROM sourced_history ORDER BY product_url,observed_at_reported LIMIT 500',(source_url,) if source_url else ()).fetchall()
+                    result=[dict(r) for r in rows]
             elif key=='history' and self.command=='GET':
                 days=int(qs.get('days',['30'])[0]);
                 if days not in (7,30,90,180,365):raise ValueError('Invalid history period')

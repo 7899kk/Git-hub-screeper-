@@ -2,7 +2,7 @@
 
 Independent, mobile-first Indian shopping price collector and tracker. Original implementation; no third-party scraper repositories. Python 3.12+ standard library + SQLite + plain HTML/CSS/JavaScript. Includes an Android WebView client project.
 
-**Release status: runnable first release, not complete live coverage of all 18 stores.** All 18 independent connector modules pass structured-data contract tests. A live one-query probe extracted an AJIO listing's price; it was **out of stock**. Other sources returned blocked, unavailable, oversized or non-crawlable pages. Installed connectors must not be mistaken for verified retailer coverage. See [live probe](docs/live-probe.json) and [coverage](docs/COVERAGE.md).
+**Release status: runnable first release, not complete live coverage of all 18 stores.** All 18 independent connector modules pass structured-data contract tests. The initial name-search probe extracted an out-of-stock AJIO price. Follow-up direct-link tests verified IKEA and revealed/fixed malformed Croma JSON-LD. Live API/worker acceptance reports are in `docs/live-acceptance*.json`; transient failures are preserved. Installed connectors must not be mistaken for verified retailer coverage. See [live probe](docs/live-probe.json) and [coverage](docs/COVERAGE.md).
 
 ## Start on a computer
 
@@ -17,6 +17,7 @@ cd Git-hub-screeper-
 3. Run the web app:
 
 ```sh
+python -m backend.import_history
 python -m backend.server --sample
 ```
 
@@ -88,3 +89,7 @@ This is a working first release for small self-hosted tracking, not a claim that
 The standard-library web server is intended for small controlled deployments behind TLS and edge request limits, not large public workloads. Before a broad launch, add durable accounts, a production HTTP server, pagination, richer verified adapters/feeds, matching review administration and cloud push. Move to PostgreSQL and a distributed queue for multiple servers. Do not promise unlimited free collection or millions of tracked products.
 
 No browser visual QA, physical Android device test, Android compilation, or hosted deployment was performed in the initial build. Automated API and extraction checks are the available verification.
+
+## Follow-up: live refresh and previous data
+
+Product details now include **Refresh live price**. Run `python -m backend.import_history` to load the included, attributed historical CSV, then open **Sourced history**. Imported records, source timestamps and source-recorded charts remain explicitly external/unverified; they do not alter live prices, observations, matching or alerts. Some source product titles/variants are inconsistent and need review. The file is not a universal history database and contains no previous history for the Croma/IKEA benchmark products. See [follow-up validation](docs/FOLLOW_UP.md).

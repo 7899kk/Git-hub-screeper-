@@ -1,0 +1,179 @@
+{
+  "tested_at": "2026-10-10T06:44:12.287205+00:00",
+  "scope": "Live API collection and an immediate worker refresh; not past-day backfill",
+  "products": [
+    {
+      "product_url": "https://www.croma.com/samsung-galaxy-a16-5g-8gb-ram-256gb-gold-/p/311654",
+      "first_collection": {
+        "sources": [
+          {
+            "platform": "croma",
+            "status": "network",
+            "message": "The read operation timed out"
+          }
+        ],
+        "listings": []
+      }
+    },
+    {
+      "product_url": "https://www.ikea.com/in/en/p/lack-side-table-white-10514792/",
+      "first_collection": {
+        "sources": [
+          {
+            "platform": "ikea",
+            "status": "available",
+            "listing_ids": [
+              "1f5f8e51115346bea6f5e25890c0b355"
+            ],
+            "errors": []
+          }
+        ],
+        "listings": [
+          {
+            "id": "1f5f8e51115346bea6f5e25890c0b355",
+            "variant_id": "73a8efcf285e4895b2e262a2805d7483",
+            "platform_id": "ikea",
+            "external_id": "105.147.92",
+            "url": "https://www.ikea.com/in/en/p/lack-side-table-white-10514792/",
+            "seller_id": "7cebd230175f4176a1ead65c73205782",
+            "latest_price": 99900,
+            "last_success": "2026-10-10T06:44:50.513353+00:00",
+            "stale": false,
+            "verification": "live",
+            "availability": "in_stock",
+            "product_id": "42091a59c9f84a6c8864c14e75c0264c",
+            "title": "LACK Side table - white 35x35 cm (13 3/4x13 3/4 \")",
+            "brand": "IKEA",
+            "model": "105.147.92",
+            "gtin": "",
+            "category": "Furniture",
+            "seller": "IKEA",
+            "mrp": null,
+            "shipping": null,
+            "variant": {
+              "colour": "white",
+              "size": "35x35cm"
+            }
+          }
+        ]
+      },
+      "history_after_worker": {
+        "points": [
+          {
+            "id": "a4ce7c8b8e6f4b2981399917aeacce23",
+            "listing_id": "1f5f8e51115346bea6f5e25890c0b355",
+            "price": 99900,
+            "mrp": null,
+            "shipping": null,
+            "observed_at": "2026-10-10T06:44:50.513353+00:00",
+            "seller": "IKEA",
+            "availability": "in_stock",
+            "verification": "live",
+            "evidence": "json_ld_offer"
+          },
+          {
+            "id": "2eaeff0528644c9d879e70c757c218c6",
+            "listing_id": "1f5f8e51115346bea6f5e25890c0b355",
+            "price": 99900,
+            "mrp": null,
+            "shipping": null,
+            "observed_at": "2026-10-10T06:44:59.936138+00:00",
+            "seller": "IKEA",
+            "availability": "in_stock",
+            "verification": "live",
+            "evidence": "json_ld_offer"
+          }
+        ],
+        "lowest": 99900,
+        "highest": 99900,
+        "change_percent": 0.0,
+        "first_tracking": "2026-10-10T06:44:50.513353+00:00",
+        "last_success": "2026-10-10T06:44:59.936138+00:00",
+        "period_days": 30,
+        "verification": "live"
+      },
+      "current": {
+        "id": "1f5f8e51115346bea6f5e25890c0b355",
+        "variant_id": "73a8efcf285e4895b2e262a2805d7483",
+        "platform_id": "ikea",
+        "external_id": "105.147.92",
+        "url": "https://www.ikea.com/in/en/p/lack-side-table-white-10514792/",
+        "seller_id": "7cebd230175f4176a1ead65c73205782",
+        "latest_price": 99900,
+        "last_success": "2026-10-10T06:44:59.936138+00:00",
+        "stale": false,
+        "verification": "live",
+        "availability": "in_stock",
+        "product_id": "42091a59c9f84a6c8864c14e75c0264c",
+        "title": "LACK Side table - white 35x35 cm (13 3/4x13 3/4 \")",
+        "brand": "IKEA",
+        "model": "105.147.92",
+        "gtin": "",
+        "category": "Furniture",
+        "seller": "IKEA",
+        "mrp": null,
+        "shipping": null,
+        "variant": {
+          "colour": "white",
+          "size": "35x35cm"
+        }
+      }
+    }
+  ],
+  "worker_jobs_claimed": 1,
+  "external_import": {
+    "inserted": 27,
+    "rejected": [
+      {
+        "row": 6,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 7,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 9,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 10,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 15,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 16,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 17,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 19,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 20,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      }
+    ],
+    "source_sha256": "39bb9962995dc4004c7f785cdcdb21177c5cf892f0df6cbd1f6bd2b4b74e288a",
+    "verification": "external_unverified",
+    "timezone": "unspecified by source",
+    "api_records": 27
+  },
+  "live_observations_after_import": 2
+}

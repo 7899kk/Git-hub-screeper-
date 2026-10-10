@@ -1,0 +1,75 @@
+{
+  "tested_at": "2026-10-10T06:45:46.738913+00:00",
+  "scope": "Live API collection and an immediate worker refresh; not past-day backfill",
+  "products": [
+    {
+      "product_url": "https://www.croma.com/samsung-galaxy-a16-5g-8gb-ram-256gb-gold-/p/311654",
+      "first_collection": {
+        "sources": [
+          {
+            "platform": "croma",
+            "status": "network",
+            "message": "The read operation timed out"
+          }
+        ],
+        "listings": []
+      }
+    }
+  ],
+  "worker_jobs_claimed": 0,
+  "external_import": {
+    "inserted": 27,
+    "rejected": [
+      {
+        "row": 6,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 7,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 9,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 10,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 15,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 16,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 17,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 19,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      },
+      {
+        "row": 20,
+        "platform": "flipkart",
+        "reason": "Missing or truncated product title"
+      }
+    ],
+    "source_sha256": "39bb9962995dc4004c7f785cdcdb21177c5cf892f0df6cbd1f6bd2b4b74e288a",
+    "verification": "external_unverified",
+    "timezone": "unspecified by source",
+    "api_records": 27
+  },
+  "live_observations_after_import": 0
+}

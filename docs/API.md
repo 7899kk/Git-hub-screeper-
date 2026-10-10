@@ -21,3 +21,5 @@ All routes return JSON. Money fields are **integer paise**. Timestamps are UTC I
 Source searches are limited to one per browser every 15 seconds and two simultaneous whole searches per process; four source threads per search. Edge IP/session limits are still needed before public deployment. Search is synchronous in this version; configure a several-minute upstream timeout. Existing verified records remain queryable during collection.
 
 Lowest verified badge excludes stale, synthetic and unavailable listings. Comparison groups use exact product variant IDs; candidate title matches are never automatically grouped.
+
+`GET /api/imports` returns up to 500 sourced history records; `?url=EXACT_PRODUCT_URL` filters by the original source listing URL. All rows retain external-unverified status, original reported timestamps and attribution. This endpoint never substitutes external prices for `/api/products` or `/api/history` values. Sourced history charts and live history are separate UI flows.

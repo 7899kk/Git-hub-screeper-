@@ -170,3 +170,31 @@ class AdditionalTests(unittest.TestCase):
     def test_storage_equivalence(self):self.assertEqual(variants('Phone 256GB storage')['storage'],variants('Phone 256GB')['storage'])
     def test_unknown_variants_need_review(self):
         a={'title':'Phone','model':'M1','variant':{}};self.assertEqual(match(a,a)['decision'],'review')
+
+class ImportAndCromaTests(unittest.TestCase):
+    def test_croma_literal_newline_and_extra_brace(self):
+        product={'@type':'Product','name':'Samsung Phone 8GB RAM 256GB Gold','sku':'311654','description':'two lines','offers':{'@type':'Offer','price':'20499.00','priceCurrency':'INR'}}
+        text=json.dumps(product).replace('two lines','two\nlines')+' }'
+        o=REGISTRY['croma']().parse('<script type="application/ld+json">'+text+'</script>','https://www.croma.com/phone/p/311654')
+        self.assertEqual(o.price,2049900);self.assertEqual(o.variant['storage'],'256gb')
+    def test_croma_trailing_object_rejected(self):
+        with self.assertRaises(CollectionError):REGISTRY['croma']().parse('<script type="application/ld+json">{"@type":"Product"} {"price":10}</script>','https://www.croma.com/p/1')
+    def test_ram_storage_and_dimensions(self):
+        self.assertEqual(variants('Phone 8GB RAM, 256GB')['storage'],'256gb');self.assertEqual(variants('LACK 35x35 cm')['size'],'35x35cm')
+    def test_import_deduplicates_and_never_updates_live(self):
+        from backend.import_history import import_csv
+        with tempfile.TemporaryDirectory() as t:
+            db=Database(Path(t)/'db');f=Path(t)/'history.csv'
+            f.write_text('Product_ID,Status_Amazon,Amazon_URL,Amazon_Product_Title,Scrape_Date_Amazon,Scrape_Time_Amazon,Amazon_Price\nP1,Success,https://www.amazon.in/dp/B000000001,Phone 256GB Black,2026-07-02,17:00:00,10000\n')
+            self.assertEqual(import_csv(db,f)['inserted'],1);self.assertEqual(import_csv(db,f)['inserted'],0)
+            self.assertEqual(db.listings(),[])
+            with db.connect() as c:
+                self.assertEqual(c.execute('SELECT count(*) FROM observations').fetchone()[0],0)
+                self.assertEqual(c.execute('SELECT count(*) FROM monitoring_jobs').fetchone()[0],0)
+                self.assertEqual(c.execute('SELECT timezone FROM sourced_history').fetchone()[0],None)
+    def test_import_rejects_search_url(self):
+        from backend.import_history import import_csv
+        with tempfile.TemporaryDirectory() as t:
+            db=Database(Path(t)/'db');f=Path(t)/'history.csv'
+            f.write_text('Status_Amazon,Amazon_URL,Amazon_Product_Title,Scrape_Date_Amazon,Scrape_Time_Amazon,Amazon_Price\nSuccess,https://www.amazon.in/s?k=phone,Phone,2026-07-02,17:00:00,10000\n')
+            r=import_csv(db,f);self.assertEqual(r['inserted'],0);self.assertEqual(len(r['rejected']),1)

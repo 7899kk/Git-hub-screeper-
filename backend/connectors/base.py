@@ -11,7 +11,7 @@ from backend.matching import variants
 
 class Page(HTMLParser):
     def __init__(self):
-        super().__init__(); self.meta = {}; self.json = []; self.links = []; self._script = False; self._buf = []
+        super().__init__(); self.meta = {}; self.json = []; self.raw_json = []; self.links = []; self._script = False; self._buf = []
     def handle_starttag(self, tag, attrs):
         d = dict(attrs)
         if tag == 'meta': self.meta[d.get('property', d.get('name', ''))] = d.get('content', '')
@@ -21,6 +21,7 @@ class Page(HTMLParser):
         if self._script: self._buf.append(data)
     def handle_endtag(self, tag):
         if tag == 'script' and self._script:
+            self.raw_json.append(''.join(self._buf))
             try: self.json.append(json.loads(''.join(self._buf)))
             except (ValueError, TypeError): pass
             self._script = False
