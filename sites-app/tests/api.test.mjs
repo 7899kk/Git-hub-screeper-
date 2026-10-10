@@ -15,6 +15,11 @@ test('Built API against isolated D1: read, watch, alerts, history, settings, que
  assert.equal((await post({action:'run'})).processed,0);
  assert.match((await post({action:'collect',url:'http://127.0.0.1'})).error,/unsupported host/);
  assert.equal((await get('action=detail&id=l')).listing.title,'Fixture Phone');
+ const health=await (await mf.dispatchFetch('http://localhost/api/v1/health')).json();assert.equal(health.database,'connected');assert.equal(health.recorded_listings,1);
+ const comp=await (await mf.dispatchFetch('http://localhost/api/v1/compare?ids=l')).json();assert.equal(comp.groups[0].listings[0].id,'l');
+ const hist=await (await mf.dispatchFetch('http://localhost/api/v1/history?id=l&days=30')).json();assert.equal(hist.low,10000);
+ const invalid=await mf.dispatchFetch('http://localhost/api/v1/collect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:'http://localhost'})});assert.equal(invalid.status,400);
+ const cross=await mf.dispatchFetch('http://localhost/api/v1/collect',{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://evil.example'},body:'{}'});assert.equal(cross.status,403);
  await post({action:'watch',id:'l',enabled:false});assert.equal((await get()).listings[0].watched,0);
  await mf.setOptions({...options,bindings:{REQUIRE_OWNER_AUTH:'true',OWNER_PASSWORD:'test-password'}});
  assert.equal((await mf.dispatchFetch('http://localhost/api/pulse')).status,401);
