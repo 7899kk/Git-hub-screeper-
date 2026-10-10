@@ -1,0 +1,15 @@
+services:
+  api:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]
+    environment:
+      COOKIE_SECURE: "1"
+    volumes: ["pricepulse-data:/app/data"]
+    restart: unless-stopped
+  worker:
+    build: .
+    command: ["python", "-m", "backend.worker", "--db", "/app/data/pricepulse.db"]
+    volumes: ["pricepulse-data:/app/data"]
+    restart: unless-stopped
+volumes:
+  pricepulse-data:

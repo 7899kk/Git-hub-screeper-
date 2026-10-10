@@ -1,0 +1,19 @@
+plugins { id 'com.android.application' }
+def url = providers.gradleProperty('APP_URL').orElse('https://example.invalid').get()
+if (!url.matches('https://[A-Za-z0-9.-]+(:[0-9]+)?/?')) {
+    throw new GradleException('APP_URL must be an HTTPS origin without query, credentials, or paths')
+}
+android {
+    namespace 'in.pricepulse.app'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'in.pricepulse.app'
+        minSdk 23
+        targetSdk 36
+        versionCode 1
+        versionName '1.0'
+        buildConfigField 'String', 'APP_URL', '"' + url + '"'
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

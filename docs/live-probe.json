@@ -1,0 +1,144 @@
+{
+  "scope": "One live name search per platform, one product maximum; not a full coverage certification",
+  "sources": [
+    {
+      "platform": "amazon",
+      "status": "http",
+      "message": "HTTP 503",
+      "checked_at": "2026-10-10T06:26:59.410463+00:00"
+    },
+    {
+      "platform": "flipkart",
+      "status": "no_verified_price",
+      "observations": [],
+      "errors": [
+        {
+          "code": "blocked",
+          "message": "Challenge or access-denied page; no bypass attempted",
+          "url": "https://www.flipkart.com/samsung-183-l-direct-cool-single-door-4-star-refrigerator-base-drawer-digital-inverter-touch-defrost-2026-model/p/itmed8222e022d31?pid=RFRHJ4JJENYFFSGZ&lid=LSTRFRHJ4JJENYFFSGZCQQ4ZL&marketplace=FLIPKART&q=samsung&store=search.flipkart.com&srno=s_1_1&otracker=search&fm=organic&iid=en_wEj0DuZXsG3LLLluTj9HRzRDG5YfGcBeyM0hxdljSQmFt7Lo2uEevk1ewgpQLYFU6-xsB2JCteJwcr0ByIoOzhip10CkU1DAmAuN9bMnubqvPtVEm9uTr9tbDO1lZGPd&ppt=None&ppn=None&ssid=sjx7swr9tc0000001791613620902&qH=fe546279a62683de&ov_redirect=true"
+        }
+      ],
+      "checked_at": "2026-10-10T06:27:14.704311+00:00"
+    },
+    {
+      "platform": "myntra",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:02.974698+00:00"
+    },
+    {
+      "platform": "ajio",
+      "status": "live_price_extracted",
+      "observations": [
+        {
+          "platform": "ajio",
+          "listing_id": "494421978",
+          "url": "https://www.ajio.com/samsung-samsung-galaxy-watch-ultra-smart-watch-upto-100-h-battery-3nm-processor-dual-gps-quick-button-siren-sapphire-glass--titanium-10atm--ip68-bp--ecg-monitor-energy-score--ages-titanium-white-sm-l705fzwains/p/4944219780_multi",
+          "title": "Samsung Galaxy Watch Ultra Smart Watch Upto 100 H Battery 3Nm Processor Dual Gps Quick Button/Siren Sapphire Glass & Titanium 10Atm & Ip68 Bp & Ecg Monitor Energy Score & Ages Titanium White Sm-L705Fzwains",
+          "price": 3737900,
+          "brand": "Samsung",
+          "model": "",
+          "gtin": "",
+          "variant": {
+            "colour": "white",
+            "size": "freesize"
+          },
+          "seller": "",
+          "mrp": null,
+          "shipping": null,
+          "availability": "out_of_stock",
+          "discounts": [],
+          "timestamp": "2026-10-10T06:27:17.811097+00:00",
+          "verification": "live",
+          "evidence": "json_ld_offer"
+        }
+      ],
+      "errors": [],
+      "checked_at": "2026-10-10T06:27:17.811244+00:00"
+    },
+    {
+      "platform": "tatacliq",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:01.758843+00:00"
+    },
+    {
+      "platform": "meesho",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:05.520998+00:00"
+    },
+    {
+      "platform": "snapdeal",
+      "status": "blocked",
+      "message": "HTTP 403",
+      "checked_at": "2026-10-10T06:27:04.071168+00:00"
+    },
+    {
+      "platform": "jiomart",
+      "status": "page_size",
+      "message": "Page exceeds 2 MB",
+      "checked_at": "2026-10-10T06:27:12.527837+00:00"
+    },
+    {
+      "platform": "croma",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:14.770549+00:00"
+    },
+    {
+      "platform": "reliancedigital",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:12.392005+00:00"
+    },
+    {
+      "platform": "vijaysales",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:21.582749+00:00"
+    },
+    {
+      "platform": "nykaa",
+      "status": "internal",
+      "message": "got more than 100 headers",
+      "checked_at": "2026-10-10T06:27:46.041467+00:00"
+    },
+    {
+      "platform": "firstcry",
+      "status": "blocked",
+      "message": "HTTP 403",
+      "checked_at": "2026-10-10T06:27:17.231554+00:00"
+    },
+    {
+      "platform": "shoppersstop",
+      "status": "blocked",
+      "message": "HTTP 403",
+      "checked_at": "2026-10-10T06:27:18.622674+00:00"
+    },
+    {
+      "platform": "pepperfry",
+      "status": "robots_denied",
+      "message": "Source disallows this collection path",
+      "checked_at": "2026-10-10T06:27:18.635070+00:00"
+    },
+    {
+      "platform": "urbanladder",
+      "status": "page_size",
+      "message": "Page exceeds 2 MB",
+      "checked_at": "2026-10-10T06:27:31.035223+00:00"
+    },
+    {
+      "platform": "ikea",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:25.366326+00:00"
+    },
+    {
+      "platform": "decathlon",
+      "status": "search_unavailable",
+      "message": "No crawlable product links; use a direct URL or authorized catalog feed",
+      "checked_at": "2026-10-10T06:27:27.497571+00:00"
+    }
+  ]
+}
