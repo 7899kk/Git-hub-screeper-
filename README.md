@@ -97,3 +97,7 @@ Product details now include **Refresh live price**. Run `python -m backend.impor
 ### Look up a product's price history by year
 
 Open **History by year**, paste a product URL and choose a calendar year. Existing verified observations and attributed repository records are shown separately. Optional Keepa integration supports Amazon India history when a server-side paid API key is configured. Unknown years stay unknown. See [year-history setup, sources and limits](docs/YEAR_HISTORY.md).
+
+### Use this repository as your app backend
+
+Authenticated collection, comparison and history endpoints are available under `/api/v1/`. See [connect your app](docs/CONNECT_YOUR_APP.md), [JavaScript SDK](sdk/pricepulse.mjs), and [reviewed PHP price-comparison repositories](docs/REPOSITORIES_REVIEWED.md). Deploy this code on a running server; GitHub alone does not serve a scraping API.

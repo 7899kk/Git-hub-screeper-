@@ -4,6 +4,8 @@ services:
     ports: ["127.0.0.1:8000:8000"]
     environment:
       COOKIE_SECURE: "1"
+      PRICEPULSE_API_KEY: "${PRICEPULSE_API_KEY:-}"
+      PRICEPULSE_APP_ORIGINS: "${PRICEPULSE_APP_ORIGINS:-}"
     volumes: ["pricepulse-data:/app/data"]
     restart: unless-stopped
   worker:

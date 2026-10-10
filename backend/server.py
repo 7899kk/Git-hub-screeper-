@@ -10,6 +10,7 @@ from backend.models import CollectionError, now, money
 from backend.connectors import REGISTRY, connector_for
 from backend.sample import seed
 from backend.year_history import lookup
+from backend.app_api import compare
 
 ROOT=Path(__file__).resolve().parent.parent/'frontend'
 class Handler(BaseHTTPRequestHandler):
@@ -22,6 +23,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff'); self.send_header('Referrer-Policy','no-referrer')
         self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'")
         if cookie:self.send_header('Set-Cookie',cookie)
+        origin=self.headers.get('Origin')
+        if origin and origin in os.getenv('PRICEPULSE_APP_ORIGINS','').split(','):
+            self.send_header('Access-Control-Allow-Origin',origin);self.send_header('Vary','Origin')
+            self.send_header('Access-Control-Allow-Methods','GET, POST, OPTIONS');self.send_header('Access-Control-Allow-Headers','Authorization, Content-Type')
         self.end_headers(); self.wfile.write(raw)
     def session(self):
         cookies=SimpleCookie();cookies.load(self.headers.get('Cookie',''));sid=cookies.get('pp_session');sid=sid.value if sid else ''
@@ -30,6 +35,10 @@ class Handler(BaseHTTPRequestHandler):
             sid=secrets.token_hex(32);c.execute('INSERT INTO sessions(id,created_at) VALUES (?,?)',(sid,now()))
         secure='; Secure' if os.getenv('COOKIE_SECURE')=='1' else ''
         return sid,f'pp_session={sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=31536000{secure}'
+    def do_OPTIONS(self):
+        origin=self.headers.get('Origin','')
+        if origin not in os.getenv('PRICEPULSE_APP_ORIGINS','').split(',') or not origin:return self.send({'error':'Origin rejected'},403)
+        self.send({'ok':True})
     def do_GET(self):self.handle_request()
     def do_POST(self):self.handle_request()
     def handle_request(self):
@@ -40,16 +49,25 @@ class Handler(BaseHTTPRequestHandler):
                 if p.path not in paths:return self.send({'error':'Not found'},404)
                 ext=Path(paths[p.path]).suffix;ct={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.json':'application/manifest+json','.svg':'image/svg+xml'}[ext]
                 return self.send((ROOT/paths[p.path]).read_bytes(),ctype=ct)
+            if p.path.startswith('/api/v1/'):
+                token=os.getenv('PRICEPULSE_API_KEY','')
+                if not token:return self.send({'error':'Configure PRICEPULSE_API_KEY before connecting external apps'},503)
+                supplied=self.headers.get('Authorization','')
+                if not secrets.compare_digest(supplied,'Bearer '+token):return self.send({'error':'Invalid API key'},401)
             sid,cookie=self.session();body={}
             if self.command=='POST':
                 # Same-origin POST protection, also for anonymous private watchlists.
                 origin=self.headers.get('Origin')
-                if origin and urlparse(origin).netloc!=self.headers.get('Host'):return self.send({'error':'Origin rejected'},403,cookie)
+                if origin and urlparse(origin).netloc!=self.headers.get('Host') and not (p.path.startswith('/api/v1/') and origin in os.getenv('PRICEPULSE_APP_ORIGINS','').split(',')):return self.send({'error':'Origin rejected'},403,cookie)
                 n=int(self.headers.get('Content-Length','0'))
                 if n>16384:return self.send({'error':'Body too large'},413,cookie)
                 body=json.loads(self.rfile.read(n) or b'{}')
                 if not isinstance(body,dict):raise ValueError('JSON object required')
             key=p.path.removeprefix('/api/');result=None
+            if key.startswith('v1/'):
+                key=key[3:]
+                if key=='collect':key='search';body['query']=body.get('url','')
+                elif key=='search':body['query']=body.get('query','')
             if key=='health':result={'status':'ok','version':'1.0.0'}
             elif key=='platforms':
                 with db.connect() as c:result=[dict(r) for r in c.execute('SELECT * FROM platforms ORDER BY name')]
@@ -59,9 +77,9 @@ class Handler(BaseHTTPRequestHandler):
                 if 'https://dl.flipkart.com/' in query or query.startswith(('https://flipkart.com/','https://www.flipkart.com/')):query=REGISTRY['flipkart']().resolve(query)
                 if not query or len(query)>2048:raise ValueError('Search must contain 1–2048 characters')
                 with self.server.rate_lock:
-                    t=time.time();previous=self.server.search_times.get(sid,0)
+                    t=time.time();rate_key='external-app' if p.path.startswith('/api/v1/') else sid;previous=self.server.search_times.get(rate_key,0)
                     if t-previous<15:return self.send({'error':'Please wait 15 seconds between source searches'},429,cookie)
-                    self.server.search_times[sid]=t
+                    self.server.search_times[rate_key]=t
                     if len(self.server.search_times)>10000:self.server.search_times={k:v for k,v in self.server.search_times.items() if t-v<3600}
                 def collect(cls):
                     with db.connect() as c:
@@ -90,6 +108,10 @@ class Handler(BaseHTTPRequestHandler):
                 rows=db.listings('' if query.startswith('https://') else query)
                 if query.startswith('https://'): rows=[l for l in rows if l['url']==query]
                 result={'sources':status,'listings':rows}
+            elif key=='compare' and self.command=='GET':
+                ids=qs.get('ids',[''])[0].split(',')
+                if len(ids)>50:raise ValueError('Compare at most 50 listings')
+                result=compare(db,[i for i in ids if i])
             elif key=='year-history' and self.command=='POST':
                 if not self.server.search_slots.acquire(blocking=False):return self.send({'error':'History providers are busy; retry shortly'},429,cookie)
                 try:result=lookup(db,str(body.get('url','')),body.get('year'),body.get('provider') is True)
