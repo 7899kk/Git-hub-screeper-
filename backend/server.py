@@ -56,7 +56,8 @@ class Handler(BaseHTTPRequestHandler):
             elif key=='products' and self.command=='GET':result=db.listings(qs.get('q',[''])[0],qs.get('sample',['0'])[0]=='1')
             elif key=='search' and self.command=='POST':
                 query=str(body.get('query','')).strip()
-                if not query or len(query)>300:raise ValueError('Search must contain 1–300 characters')
+                if 'https://dl.flipkart.com/' in query or query.startswith(('https://flipkart.com/','https://www.flipkart.com/')):query=REGISTRY['flipkart']().resolve(query)
+                if not query or len(query)>2048:raise ValueError('Search must contain 1–2048 characters')
                 with self.server.rate_lock:
                     t=time.time();previous=self.server.search_times.get(sid,0)
                     if t-previous<15:return self.send({'error':'Please wait 15 seconds between source searches'},429,cookie)

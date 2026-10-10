@@ -198,3 +198,19 @@ class ImportAndCromaTests(unittest.TestCase):
             db=Database(Path(t)/'db');f=Path(t)/'history.csv'
             f.write_text('Status_Amazon,Amazon_URL,Amazon_Product_Title,Scrape_Date_Amazon,Scrape_Time_Amazon,Amazon_Price\nSuccess,https://www.amazon.in/s?k=phone,Phone,2026-07-02,17:00:00,10000\n')
             r=import_csv(db,f);self.assertEqual(r['inserted'],0);self.assertEqual(len(r['rejected']),1)
+
+class FlipkartShareTests(unittest.TestCase):
+    def test_share_normalization(self):
+        c=REGISTRY['flipkart']()
+        url=c.resolve('Take a look on Flipkart https://dl.flipkart.com/dl/lava/p/itm19c98d835e5ea?pid=MOBHQT22USSQ99WH&lid=LIST&gclid=tracking')
+        self.assertEqual(url,'https://www.flipkart.com/lava/p/itm19c98d835e5ea?pid=MOBHQT22USSQ99WH&lid=LIST')
+        o=c.parse(html(),'https://www.flipkart.com/lava/p/itm19c98d835e5ea')
+        self.assertEqual(o.platform,'flipkart')
+    def test_share_collect_uses_canonical(self):
+        requested=[]
+        def transport(u):
+            requested.append(u);return 'User-agent: *\nAllow: /' if u.endswith('robots.txt') else html()
+        c=REGISTRY['flipkart'](transport=transport)
+        o=c.collect('https://dl.flipkart.com/dl/lava/p/itm19c98d835e5ea?pid=ONE&gclid=tracking')
+        self.assertEqual(o.url,'https://www.flipkart.com/lava/p/itm19c98d835e5ea?pid=ONE')
+        self.assertTrue(all('dl.flipkart.com' not in u for u in requested))
