@@ -22,7 +22,8 @@ async function show(next='home'){
    else renderCompare();
   }else if(screen==='imports'){
    const rows=await api('imports');const groups=new Map();for(const r of rows){const key=r.product_url+r.attributes;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);}const charts=[...groups.values()].filter(g=>g.length>1).map(g=>{const prices=g.map(r=>r.price),lo=Math.min(...prices),hi=Math.max(...prices);const points=g.map((r,i)=>`${20+i/(g.length-1)*360},${20+(hi-r.price)/(hi-lo||1)*100}`);return `<article class="card"><span class="tag warn">External records · unverified</span><h3>${esc(g[0].title)}</h3><div class="meta">${esc(g[0].platform_id)} · ${g.length} records of this reported variant</div><svg viewBox="0 0 400 160" class="chart" role="img" aria-label="Imported price observations, unverified"><polyline class="chart-line" points="${points.join(' ')}"/>${g.map((r,i)=>`<circle class="chart-point" cx="${points[i].split(',')[0]}" cy="${points[i].split(',')[1]}" r="4"><title>${esc(r.observed_at_reported)}: ${rupee(r.price)}</title></circle>`).join('')}</svg><div class="meta">Source-recorded range: ${rupee(lo)}–${rupee(hi)}<br>${esc(g[0].observed_at_reported)} → ${esc(g[g.length-1].observed_at_reported)}<br>Points ordered by reported time; timezone unspecified.</div></article>`;}).join('');$('#view').innerHTML=`<div class="eyebrow">Previous records with provenance</div><h1>Sourced history</h1><p class="info">These are external, independently unverified records. They do not update live prices or trigger alerts. Source timestamps have no declared timezone. Different listings and variants remain separate.</p><div class="grid">${charts}</div><h2>Source records</h2><div class="table-wrap"><table><thead><tr><th>Product / store</th><th>Reported price</th><th>Source time</th><th>Attribution</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.title)}<div class="meta">${esc(r.platform_id)} · ${esc(r.attributes)}</div></td><td>${rupee(r.price)}<br><span class="tag warn">External · unverified</span></td><td>${esc(r.observed_at_reported)}<div class="meta">Timezone unspecified</div></td><td><a class="link" href="${esc(r.source_url)}" target="_blank" rel="noopener noreferrer">${esc(r.source_name)}</a><div class="meta">${esc(r.license)}</div></td></tr>`).join('')}</tbody></table></div>${rows.length?'':empty('No external records imported','Run the attributed CSV import command. Imported data stays separate from live collection.')}`;
-  }else if(screen==='detail'){await detail();}
+  }else if(screen==='year-history'){yearScreen();}
+  else if(screen==='detail'){await detail();}
   else if(screen==='watchlist'){
    const rows=await api('watchlist');$('#view').innerHTML=`<div class="eyebrow">Your personal price radar</div><h1>Watchlist</h1><p class="sub">Saved for this browser. Live listings are monitored by the background worker.</p><div class="grid">${rows.map(l=>card(l)+`<button class="plain" data-unwatch="${l.id}">Remove from watchlist</button>`).join('')}</div>${rows.length?'':empty('Nothing tracked yet','Search for a product and tap Track to keep it here.')}`;
   }else if(screen==='platforms'){
@@ -68,7 +69,10 @@ document.addEventListener('change',e=>{if(e.target.id==='sample'){sample=e.targe
 document.addEventListener('submit',async e=>{
  e.preventDefault();const f=e.target;
  try{
-  if(f.id==='search-form'){
+  if(f.id==='year-form'){
+   const fd=new FormData(f);f.querySelector('button').disabled=true;$('#year-results').textContent='Looking up recorded history…';
+   try{const h=await api('year-history',{url:fd.get('url'),year:Number(fd.get('year')),provider:fd.get('provider')==='on'});yearResults(h);}finally{f.querySelector('button').disabled=false;}
+  }else if(f.id==='search-form'){
    query=$('#query').value.trim();sample=false;await show('compare');
    $('#notice').innerHTML='<span class="loading"></span> Collecting sources independently. This can take a few minutes. Cached verified observations remain visible.';
    document.querySelector('#search-form button').disabled=true;
@@ -85,3 +89,16 @@ document.addEventListener('submit',async e=>{
 $('#alerts-shortcut').addEventListener('click',()=>show('alerts'));
 async function checkNotifications(){try{if(document.hidden)return;const rows=await api('notifications');const unread=rows.filter(n=>!n.read);$('#badge').textContent=unread.length;if(notifications&&unread.length&&'Notification' in window&&Notification.permission==='granted'){const last=sessionStorage.getItem('last-note');if(last!==unread[0].id){new Notification('PricePulse India',{body:unread[0].message});sessionStorage.setItem('last-note',unread[0].id);}}}catch{}}
 api('settings').then(s=>{notifications=s.notifications!==false;}).catch(()=>{});show();checkNotifications();poll=setInterval(checkNotifications,60000);
+
+function yearScreen(){
+ $('#view').innerHTML=`<div class="eyebrow">Past prices, with their sources</div><h1>History by year</h1><p class="sub">Paste a direct product link and choose a calendar year. We query our recorded observations and attributed imports. Missing years remain unknown.</p><div class="card"><form id="year-form"><label class="field">Product URL<input name="url" type="url" maxlength="2000" placeholder="https://www.amazon.in/dp/…" required></label><label class="field">Year<input name="year" type="number" min="2000" max="${new Date().getFullYear()}" value="${new Date().getFullYear()}" required></label><label class="field"><input name="provider" type="checkbox"> Also query Keepa for Amazon India (requires server API key; uses provider tokens)</label><button class="btn">Look up historical prices</button></form></div><div id="year-results"></div>`;
+}
+function yearChart(s){
+ const points=s.points.filter(p=>p.price!=null);if(points.length<2)return '';
+ const lo=Math.min(...points.map(p=>p.price)),hi=Math.max(...points.map(p=>p.price));
+ // Dots only: source gaps are unknown; no interpolated or inferred prices.
+ return `<svg class="chart" viewBox="0 0 800 200" role="img" aria-label="Recorded historical price points">${points.map((p,i)=>`<circle class="chart-point" cx="${30+i/(points.length-1)*740}" cy="${20+(hi-p.price)/(hi-lo||1)*140}" r="5"><title>${esc(p.observed_at)}: ${rupee(p.price)}</title></circle>`).join('')}<text x="30" y="190" fill="#74827c" font-size="12">Recorded points in source order; gaps unknown</text></svg>`;
+}
+function yearResults(h){
+ $('#year-results').innerHTML=`<p class="info">${esc(h.notice)}</p><p class="meta">Year ${h.year} · Provider: ${esc(h.provider_status.replace(/_/g,' '))}</p>${h.series.map(s=>`<h2>${esc(s.title||s.source)}</h2><p><a class="link" href="${esc(s.source_url)}" target="_blank" rel="noopener noreferrer">${esc(s.source)}</a> · ${esc(s.price_type)} <span class="tag warn">${esc(s.verification)}</span></p><p class="meta">Timezone: ${esc(s.timezone)} · Recorded range: ${esc(s.first_record)} → ${esc(s.last_record)}</p><div class="stats"><div class="stat"><small>Lowest recorded in ${h.year}</small><strong>${rupee(s.lowest)}</strong></div><div class="stat"><small>Highest recorded in ${h.year}</small><strong>${rupee(s.highest)}</strong></div></div>${yearChart(s)}<div class="table-wrap"><table><thead><tr><th>Recorded timestamp</th><th>Price</th><th>Availability</th></tr></thead><tbody>${s.points.map(p=>`<tr><td>${esc(p.observed_at)}</td><td>${rupee(p.price)}</td><td>${esc(p.availability)}</td></tr>`).join('')}</tbody></table></div>`).join('')}${h.status==='no_history'?empty('No historical price available for this year','Try a year with actual records or configure a supported historical provider. A live refresh starts tracking from today; it cannot recover past years.'):''}`;
+}

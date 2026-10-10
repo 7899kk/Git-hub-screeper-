@@ -1,0 +1,52 @@
+{
+  "method": "Actual local HTTP API with attributed external CSV; no provider API key, no retailer live request",
+  "results": [
+    {
+      "url": "https://www.amazon.in/dp/B0H2J3PRKV",
+      "year": 2026,
+      "platform": "amazon",
+      "series": [
+        {
+          "source": "datawithsaurabh/Price-Tracker",
+          "source_url": "https://github.com/datawithsaurabh/Price-Tracker/blob/main/Price-Tracker/data/price_history.csv",
+          "verification": "external_unverified",
+          "price_type": "Repository reported price",
+          "title": "Samsung Galaxy S25 5G (Icyblue, 12GB RAM, 256GB Storage) | Snapdragon 8 Elite for Galaxy | 50MP Triple Camera | 12MP Front Camera | 6.2\" Full HD+ Display | 4000mAh Battery",
+          "variant": {
+            "ram": "12",
+            "storage": "256gb"
+          },
+          "timezone": "Unspecified by source",
+          "points": [
+            {
+              "observed_at": "2026-07-02T17:49:33",
+              "price": 6299900,
+              "availability": "not independently verified"
+            },
+            {
+              "observed_at": "2026-07-12T12:12:08",
+              "price": 6969900,
+              "availability": "not independently verified"
+            }
+          ],
+          "lowest": 6299900,
+          "highest": 6969900,
+          "first_record": "2026-07-02T17:49:33",
+          "last_record": "2026-07-12T12:12:08"
+        }
+      ],
+      "provider_status": "not_requested",
+      "status": "recorded_data",
+      "notice": "Recorded points only; gaps are unknown. External history is separate from current verified prices. No price is inferred for an entire year."
+    },
+    {
+      "url": "https://www.amazon.in/dp/B0H2J3PRKV",
+      "year": 2025,
+      "platform": "amazon",
+      "series": [],
+      "provider_status": "not_requested",
+      "status": "no_history",
+      "notice": "Recorded points only; gaps are unknown. External history is separate from current verified prices. No price is inferred for an entire year."
+    }
+  ]
+}

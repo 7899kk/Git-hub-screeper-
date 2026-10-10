@@ -93,3 +93,7 @@ No browser visual QA, physical Android device test, Android compilation, or host
 ## Follow-up: live refresh and previous data
 
 Product details now include **Refresh live price**. Run `python -m backend.import_history` to load the included, attributed historical CSV, then open **Sourced history**. Imported records, source timestamps and source-recorded charts remain explicitly external/unverified; they do not alter live prices, observations, matching or alerts. Some source product titles/variants are inconsistent and need review. The file is not a universal history database and contains no previous history for the Croma/IKEA benchmark products. See [follow-up validation](docs/FOLLOW_UP.md).
+
+### Look up a product's price history by year
+
+Open **History by year**, paste a product URL and choose a calendar year. Existing verified observations and attributed repository records are shown separately. Optional Keepa integration supports Amazon India history when a server-side paid API key is configured. Unknown years stay unknown. See [year-history setup, sources and limits](docs/YEAR_HISTORY.md).

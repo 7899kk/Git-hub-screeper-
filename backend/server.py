@@ -9,6 +9,7 @@ from backend.database import Database, uid
 from backend.models import CollectionError, now, money
 from backend.connectors import REGISTRY, connector_for
 from backend.sample import seed
+from backend.year_history import lookup
 
 ROOT=Path(__file__).resolve().parent.parent/'frontend'
 class Handler(BaseHTTPRequestHandler):
@@ -88,6 +89,10 @@ class Handler(BaseHTTPRequestHandler):
                 rows=db.listings('' if query.startswith('https://') else query)
                 if query.startswith('https://'): rows=[l for l in rows if l['url']==query]
                 result={'sources':status,'listings':rows}
+            elif key=='year-history' and self.command=='POST':
+                if not self.server.search_slots.acquire(blocking=False):return self.send({'error':'History providers are busy; retry shortly'},429,cookie)
+                try:result=lookup(db,str(body.get('url','')),body.get('year'),body.get('provider') is True)
+                finally:self.server.search_slots.release()
             elif key=='imports' and self.command=='GET':
                 with db.connect() as c:
                     source_url=qs.get('url',[''])[0]
