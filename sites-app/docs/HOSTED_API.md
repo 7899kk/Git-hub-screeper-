@@ -15,3 +15,9 @@ Root Python `/api/v1` uses `Authorization` with `PRICEPULSE_API_KEY`, which is a
 ## Verification
 
 `node --test tests/api.test.mjs` exercises the compiled Worker API and D1 migrations using fixtures. `node scripts/live-api-acceptance.mjs` makes real retailer requests through the compiled Worker API against an isolated database; its JSON report distinguishes this from production or browser testing. A successful result is one observation from the time checked, not older-year backfill. The production Sites database can be inspected separately. No unattended schedule or Android push service is active.
+
+### Source-pause recovery
+
+Only a source access block (`BLOCKED`, such as HTTP 403/429 or a challenge page) pauses the whole platform, for 15 minutes. A redirect, missing product or unsupported layout no longer pauses unrelated products. Up to three HTTPS redirects within exact approved retailer hosts are followed after product identity checks. Cross-host and variant-changing redirects remain rejected. Existing legacy redirect pauses do not block a manual product-link collection.
+
+Recently verified cached prices may be returned before a source circuit check, with `cached: true` and the original timestamp. **Retry this link** sends `{ "url": "...", "retry": true }`, performs one fresh request even when a source is cooling down, and enforces a 30-second delay after the last failure. It does not reset every background job. A fresh failure remains visible and never creates a price observation. Successful collection clears the source failure status.

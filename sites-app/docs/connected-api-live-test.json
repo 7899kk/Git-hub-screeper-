@@ -1,18 +1,18 @@
 {
-  "checked_at": "2026-10-10T10:40:36.757Z",
+  "checked_at": "2026-10-10T10:48:41.567Z",
   "environment": "Compiled Sites Worker HTTP API with isolated D1 and real retailer HTTP fetches; not production database or browser UI",
   "results": [
     {
-      "step": "Live collection",
+      "step": "Live collection while legacy redirect pause is active",
       "http_status": 200,
       "result": {
-        "id": "2b59e89a-e04c-4e48-9272-eaf58e193167",
+        "id": "78dbed4d-03f6-4098-ba5b-6bada674fa04",
         "platform": "flipkart",
         "listings": [
           {
-            "id": "2b59e89a-e04c-4e48-9272-eaf58e193167",
-            "product_id": "32c0067f-f351-4640-b5ab-600ae3f3a5d5",
-            "variant_id": "cb0efb6b-4eb6-49b1-8861-4d3486c1bab1",
+            "id": "78dbed4d-03f6-4098-ba5b-6bada674fa04",
+            "product_id": "4a9ecb50-717d-4757-b212-d1af79a8145e",
+            "variant_id": "48ccb79f-2a98-4a0f-977b-b5bcf7d321e2",
             "platform": "flipkart",
             "seller_id": null,
             "url": "https://www.flipkart.com/lava-virat-curve-5g-heritage-indigo-128-gb/p/itm19c98d835e5ea?pid=MOBHQT22USSQ99WH&lid=LSTMOBHQT22USSQ99WHTHIXC9&marketplace=FLIPKART",
@@ -21,10 +21,10 @@
             "mrp": null,
             "shipping": null,
             "availability": "InStock",
-            "last_verified": "2026-10-10T10:40:46.434Z",
+            "last_verified": "2026-10-10T10:48:51.701Z",
             "state": "verified",
             "evidence": "json-ld",
-            "created_at": "2026-10-10T10:40:46.434Z",
+            "created_at": "2026-10-10T10:48:51.701Z",
             "brand": "LAVA",
             "model": null,
             "gtin": null,
@@ -35,7 +35,7 @@
         "currency": "INR",
         "price_unit": "paise",
         "cached": false,
-        "verified_at": "2026-10-10T10:40:46.434Z"
+        "verified_at": "2026-10-10T10:48:51.701Z"
       }
     },
     {
@@ -46,20 +46,20 @@
     {
       "step": "Comparison",
       "groups": 1,
-      "lowest_verified_listing_id": "2b59e89a-e04c-4e48-9272-eaf58e193167"
+      "lowest_verified_listing_id": "78dbed4d-03f6-4098-ba5b-6bada674fa04"
     },
     {
       "step": "Repeat URL/cache check",
       "http_status": 200,
       "result": {
-        "id": "2b59e89a-e04c-4e48-9272-eaf58e193167",
+        "id": "78dbed4d-03f6-4098-ba5b-6bada674fa04",
         "platform": "flipkart",
         "cached": true,
         "listings": [
           {
-            "id": "2b59e89a-e04c-4e48-9272-eaf58e193167",
-            "product_id": "32c0067f-f351-4640-b5ab-600ae3f3a5d5",
-            "variant_id": "cb0efb6b-4eb6-49b1-8861-4d3486c1bab1",
+            "id": "78dbed4d-03f6-4098-ba5b-6bada674fa04",
+            "product_id": "4a9ecb50-717d-4757-b212-d1af79a8145e",
+            "variant_id": "48ccb79f-2a98-4a0f-977b-b5bcf7d321e2",
             "platform": "flipkart",
             "seller_id": null,
             "url": "https://www.flipkart.com/lava-virat-curve-5g-heritage-indigo-128-gb/p/itm19c98d835e5ea?pid=MOBHQT22USSQ99WH&lid=LSTMOBHQT22USSQ99WHTHIXC9&marketplace=FLIPKART",
@@ -68,10 +68,10 @@
             "mrp": null,
             "shipping": null,
             "availability": "InStock",
-            "last_verified": "2026-10-10T10:40:46.434Z",
+            "last_verified": "2026-10-10T10:48:51.701Z",
             "state": "verified",
             "evidence": "json-ld",
-            "created_at": "2026-10-10T10:40:46.434Z",
+            "created_at": "2026-10-10T10:48:51.701Z",
             "brand": "LAVA",
             "model": null,
             "gtin": null,
@@ -81,7 +81,7 @@
         ],
         "currency": "INR",
         "price_unit": "paise",
-        "verified_at": "2026-10-10T10:40:46.434Z"
+        "verified_at": "2026-10-10T10:48:51.701Z"
       }
     }
   ]

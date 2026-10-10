@@ -30,8 +30,22 @@ export function createConnector(config){
  const canonical=url=>{if(!accepts(url))throw new CollectionError('INVALID_URL','HTTPS URL must use this platform’s approved host',true);const u=new URL(url);u.hash='';if(config.id==='flipkart'){u.hostname='www.flipkart.com';u.pathname=u.pathname.replace(/^\/dl(?=\/)/,'');for(const k of [...u.searchParams.keys()])if(!['pid','lid','marketplace'].includes(k))u.searchParams.delete(k);}if(config.id==='amazon'){const asin=u.pathname.match(/\/(?:dp|gp\/product)\/([A-Z0-9]{10})(?:[\/]|$)/i)?.[1];if(asin){u.pathname='/dp/'+asin.toUpperCase();u.search='';}}for(const k of [...u.searchParams.keys()])if(/^(utm_|ref|tag|aff|tracking)/i.test(k))u.searchParams.delete(k);return u.href;};
  async function page(url,fetcher=fetch){
   if(!accepts(url))throw new CollectionError('INVALID_URL','Unapproved source URL',true);
-  let r;try{r=await fetcher(url,{redirect:'manual',signal:AbortSignal.timeout(10000),headers:{'User-Agent':'PricePulseIndia/1.0 (price-monitor; public product pages)','Accept':'text/html','Accept-Language':'en-IN,en;q=0.8'}});}catch{throw new CollectionError('NETWORK','Request failed or timed out')}
-  if(r.status>=300&&r.status<400)throw new CollectionError('REDIRECT','Redirect requires manual review; no unapproved hosts followed',true);
+  let r;const initial=new URL(url);
+  for(let hop=0;hop<=3;hop++){
+   try{r=await fetcher(url,{redirect:'manual',signal:AbortSignal.timeout(10000),headers:{'User-Agent':'PricePulseIndia/1.0 (price-monitor; public product pages)','Accept':'text/html','Accept-Language':'en-IN,en;q=0.8'}});}catch{throw new CollectionError('NETWORK','Request failed or timed out')}
+   if(r.status<300||r.status>=400)break;
+   const location=r.headers.get('location');if(r.body)await r.body.cancel();
+   if(!location||hop===3)throw new CollectionError('REDIRECT','Missing redirect target or redirect limit reached',true);
+   const next=new URL(location,url);if(!accepts(next.href))throw new CollectionError('REDIRECT','Redirect target is outside approved HTTPS retailer hosts',true);
+   if(initial.pathname.includes(config.marker)){
+    const original=canonical(initial.href),target=canonical(next.href);const a=new URL(original),b=new URL(target);
+    const samePath=a.pathname.replace(/\/$/,'')===b.pathname.replace(/\/$/,'');
+    const sameFlipkartPid=config.id==='flipkart'&&a.searchParams.get('pid')&&a.searchParams.get('pid')===b.searchParams.get('pid');
+    if(!samePath&&!sameFlipkartPid)throw new CollectionError('REDIRECT','Redirect changed the product identity; use its direct product link',true);
+    if(config.id==='flipkart'&&b.searchParams.get('pid')&&a.searchParams.get('pid')&&a.searchParams.get('pid')!==b.searchParams.get('pid'))throw new CollectionError('REDIRECT','Redirect changed product variant',true);
+   }
+   url=next.href;
+  }
   if([401,403,429].includes(r.status))throw new CollectionError('BLOCKED','HTTP '+r.status+'; source paused',true);
   if(r.status===404)throw new CollectionError('NOT_FOUND','Listing not found',true);
   if(!r.ok)throw new CollectionError('HTTP_ERROR','HTTP '+r.status);

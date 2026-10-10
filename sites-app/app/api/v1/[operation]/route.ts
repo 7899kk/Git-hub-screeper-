@@ -29,7 +29,7 @@ export async function POST(request:Request){
   if(Number(request.headers.get('content-length'))>10000)return Response.json({error:'Body too large'},{status:413});
   const body:any=await request.json();const op=new URL(request.url).pathname.split('/').at(-1);
   if(op!=='collect'&&op!=='search')return Response.json({error:'Unknown API endpoint'},{status:404});
-  const payload=op==='collect'?{action:'collect',url:body.url}:{action:'discover',query:body.query,platforms:body.platforms??['flipkart','amazon']};
+  const payload=op==='collect'?{action:'collect',url:body.url,retry:body.retry===true}:{action:'discover',query:body.query,platforms:body.platforms??['flipkart','amazon']};
   const response=await pulsePost(new Request(new URL(BASE,request.url),{method:'POST',headers:request.headers,body:JSON.stringify(payload)}));const result:any=await response.json();
   if(result.error)return Response.json(result,{status:response.ok?422:response.status});
   if(op==='collect'){

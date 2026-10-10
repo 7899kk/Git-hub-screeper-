@@ -33,3 +33,18 @@ test('Android product share text yields one clean HTTPS link',async()=>{
  assert.equal(productInput('  https://www.flipkart.com/x  '),'https://www.flipkart.com/x');
  assert.throws(()=>productInput('https://flipkart.com/x https://amazon.in/y'),/one product/);
 });
+test('Approved same-product redirect is followed once',async()=>{
+ const c=connectors.find(c=>c.id==='flipkart');let calls=0;
+ const r=await c.collect('https://www.flipkart.com/lava/p/x?pid=ONE',async u=>{calls++;return calls===1?new Response('',{status:302,headers:{location:'https://flipkart.com/lava/p/x?pid=ONE'}}):new Response(html(p));});
+ assert.equal(calls,2);assert.equal(r.price,5299900);
+});
+test('Redirect rejects hostile host or variant before another fetch',async()=>{
+ const c=connectors.find(c=>c.id==='flipkart');
+ for(const target of ['https://evil.test/private','https://www.flipkart.com/lava/p/x?pid=TWO']){
+  let calls=0;await assert.rejects(c.collect('https://www.flipkart.com/lava/p/x?pid=ONE',async()=>{calls++;return new Response('',{status:302,headers:{location:target}})}),e=>e.code==='REDIRECT');assert.equal(calls,1);
+ }
+});
+test('Redirect loop is bounded',async()=>{
+ const c=connectors.find(c=>c.id==='flipkart');let calls=0;
+ await assert.rejects(c.collect('https://www.flipkart.com/lava/p/x?pid=ONE',async()=>{calls++;return new Response('',{status:302,headers:{location:'/lava/p/x?pid=ONE'}})}),e=>e.code==='REDIRECT');assert.equal(calls,4);
+});

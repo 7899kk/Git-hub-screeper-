@@ -3,7 +3,7 @@ const require=createRequire(import.meta.url);const {Miniflare}=require(require.r
 test('Built API against isolated D1: read, watch, alerts, history, settings, queue, failures',async()=>{
  const files=(await readdir('dist/server',{recursive:true})).filter(f=>/\.(?:js|mjs)$/.test(f)&&f!=='index.js');
  const options={modulesRoot:'dist/server',modules:['index.js',...files].map(f=>({type:'ESModule',path:process.cwd()+'/dist/server/'+f})),compatibilityDate:'2026-05-15',compatibilityFlags:['nodejs_compat'],d1Databases:['DB']};const mf=new Miniflare(options);
- try{const db=await mf.getD1Database('DB');for(const f of (await readdir('drizzle')).filter(f=>f.endsWith('.sql'))){const s=await readFile('drizzle/'+f,'utf8');for(const stmt of s.split('--> statement-breakpoint'))if(stmt.trim())await db.prepare(stmt).run();}
+ try{let db=await mf.getD1Database('DB');for(const f of (await readdir('drizzle')).filter(f=>f.endsWith('.sql'))){const s=await readFile('drizzle/'+f,'utf8');for(const stmt of s.split('--> statement-breakpoint'))if(stmt.trim())await db.prepare(stmt).run();}
  const get=async q=>(await mf.dispatchFetch('http://localhost/api/pulse'+(q?'?'+q:''))).json();
  const post=async body=>(await mf.dispatchFetch('http://localhost/api/pulse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json();
  let d=await get();assert.equal(d.platforms.length,18);assert.equal(d.listings.length,0);
@@ -21,6 +21,17 @@ test('Built API against isolated D1: read, watch, alerts, history, settings, que
  const invalid=await mf.dispatchFetch('http://localhost/api/v1/collect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:'http://localhost'})});assert.equal(invalid.status,400);
  const cross=await mf.dispatchFetch('http://localhost/api/v1/collect',{method:'POST',headers:{'Content-Type':'application/json',Origin:'https://evil.example'},body:'{}'});assert.equal(cross.status,403);
  await post({action:'watch',id:'l',enabled:false});assert.equal((await get()).listings[0].watched,0);
+ const fixtureHTML='<script type="application/ld+json">'+JSON.stringify({'@type':'Product',name:'Fixture Lava Phone 128GB',offers:{'@type':'Offer',price:'23999',priceCurrency:'INR',availability:'https://schema.org/InStock'}})+'</script>';
+ let retailerCalls=0;await mf.setOptions({...options,outboundService:async()=>{retailerCalls++;return new Response(fixtureHTML);}});db=await mf.getD1Database('DB');
+ await db.prepare("UPDATE platforms SET status='paused',last_error='REDIRECT: legacy',paused_until=? WHERE id='flipkart'").bind(new Date(Date.now()+86400000).toISOString()).run();
+ const collectV1=async retry=>(await mf.dispatchFetch('http://localhost/api/v1/collect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:'https://dl.flipkart.com/dl/lava/p/x?pid=ONE',retry})})).json();
+ const recovered=await collectV1(false);assert.equal(recovered.listings[0].price,2399900);assert.equal(retailerCalls,1);
+ assert.equal((await db.prepare("SELECT status FROM platforms WHERE id='flipkart'").first()).status,'available');
+ await db.prepare("UPDATE platforms SET status='paused',last_error='BLOCKED: HTTP 403',paused_until=? WHERE id='flipkart'").bind(new Date(Date.now()+900000).toISOString()).run();
+ const cached=await collectV1(false);assert.equal(cached.cached,true);assert.equal(retailerCalls,1);
+ const retry=await collectV1(true);assert.equal(retry.listings[0].price,2399900);assert.equal(retailerCalls,2);
+ await db.prepare("INSERT INTO errors(id,platform,code,message,created_at) VALUES('recent','flipkart','BLOCKED','HTTP 403',?)").bind(new Date().toISOString()).run();
+ const cooled=await collectV1(true);assert.equal(cooled.code,'RETRY_COOLDOWN');assert.equal(retailerCalls,2);
  await mf.setOptions({...options,bindings:{REQUIRE_OWNER_AUTH:'true',OWNER_PASSWORD:'test-password'}});
  assert.equal((await mf.dispatchFetch('http://localhost/api/pulse')).status,401);
  assert.equal((await mf.dispatchFetch('http://localhost/',{headers:{authorization:'Basic '+Buffer.from('owner:test-password').toString('base64')}})).status,200);
