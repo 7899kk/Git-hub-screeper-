@@ -20,6 +20,7 @@ export type Listing = {
   availability: string;
   timestamp: string;
   source: string;
+  price_evidence?: string | null;
   offers: string[];
   match: Match;
   stale: boolean;

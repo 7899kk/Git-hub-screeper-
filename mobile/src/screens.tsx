@@ -90,6 +90,7 @@ function Home() {
         <Empty
           title="Connect your live service"
           body="No demo prices or sample products. Configure your backend to start checking supported retailers."
+          action={() => router.push("/settings")}
         />
       )}
       <Status
@@ -194,6 +195,13 @@ function Resolve() {
       subtitle="Paste a product URL or shopping app share text."
       back
     >
+      {!api.base && (
+        <Empty
+          title="Connect before checking prices"
+          body="The live service fetches retailer pages and keeps provider keys private. Add its address in Settings."
+          action={() => router.push("/settings")}
+        />
+      )}
       <Card>
         <Field
           label="Product link"
@@ -203,7 +211,7 @@ function Resolve() {
         />
         <Button
           label={mutation.isPending ? "Checking product…" : "Identify product"}
-          disabled={mutation.isPending}
+          disabled={mutation.isPending || !api.base}
           onPress={() => {
             try {
               setInputError("");
@@ -528,6 +536,14 @@ function Alerts() {
 
 function Settings() {
   const api = useApi();
+  const providers = useQuery({
+    queryKey: ["providers", api.base],
+    queryFn: () =>
+      api.request<
+        Record<string, { configured: boolean; message: string; model?: string }>
+      >("/providers/status"),
+    enabled: !!api.base,
+  });
   const [base, setBase] = useState(api.base);
   const [message, setMessage] = useState("");
   const [confirm, setConfirm] = useState(false);
@@ -574,6 +590,32 @@ function Settings() {
           </Text>
         )}
         {!!message && <Text style={s.body}>{message}</Text>}
+      </Card>
+      <Card>
+        <Text style={s.subtitle}>Price sources</Text>
+        <Text style={s.body}>
+          Groq extracts details from accessible retailer pages. Prices need page
+          evidence; unavailable shipping, stock and discounts remain unknown.
+        </Text>
+        {!api.base && (
+          <Text style={s.body}>
+            Connect the live service to check provider configuration.
+          </Text>
+        )}
+        <Status
+          loading={providers.isLoading}
+          error={providers.error}
+          retry={() => providers.refetch()}
+        />
+        {Object.entries(providers.data ?? {}).map(([name, provider]) => (
+          <View key={name}>
+            <Tag
+              label={`${name === "groq" ? "Groq" : "QuickCommerce"}: ${provider.configured ? "Configured" : "Setup required"}`}
+              good={provider.configured}
+            />
+            <Text style={s.body}>{provider.message}</Text>
+          </View>
+        ))}
       </Card>
       <Card>
         <Text style={s.subtitle}>Your private device session</Text>

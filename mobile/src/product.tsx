@@ -139,7 +139,11 @@ export function ProductScreen() {
               <Tag label={item.retailer_name} />
               <Tag
                 label={
-                  item.stale ? "Stale observation" : "Provider observation"
+                  item.stale
+                    ? "Stale observation"
+                    : item.price_evidence
+                      ? "Retailer page excerpt"
+                      : "Provider observation"
                 }
                 good={!item.stale}
               />
@@ -165,6 +169,11 @@ export function ProductScreen() {
               {new Date(item.timestamp).toLocaleString()} ·{" "}
               {Math.round(item.age_hours)} hours old
             </Text>
+            {!!item.price_evidence && (
+              <Text style={s.body}>
+                Retailer price evidence: {item.price_evidence}
+              </Text>
+            )}
             <Text style={s.body}>
               Seller: {item.seller ?? "Unavailable"} · Shipping:{" "}
               {rupees(item.shipping)}

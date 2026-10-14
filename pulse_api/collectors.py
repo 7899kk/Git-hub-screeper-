@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
 from backend.connectors import REGISTRY, connector_for
+from backend.models import CollectionError
 from sqlalchemy import or_, select, update
 
 from .domain import ListingInput, safe_url, utcnow
@@ -23,6 +24,8 @@ class SingleObservation:
 
 
 def convert(connector, row):
+    if isinstance(row, ListingInput):
+        return row
     return ListingInput(
         id=hashlib.sha256(f"{row.platform}:{row.url}".encode()).hexdigest()[:40],
         retailer=row.platform,
@@ -45,8 +48,28 @@ def convert(connector, row):
     )
 
 
+def with_groq(connector):
+    from .groq import extract, key
+
+    if not key():
+        return connector
+    original = connector.parse
+
+    def parse(html, url):
+        try:
+            return original(html, url)
+        except CollectionError as exc:
+            # Do not reinterpret ambiguous offers, currencies or access challenges.
+            if exc.code != "missing_price" or not key():
+                raise
+            return extract(connector, html, url)
+
+    connector.parse = parse
+    return connector
+
+
 def collect(url):
-    connector = connector_for(safe_url(url))
+    connector = with_groq(connector_for(safe_url(url)))
     return convert(connector, connector.collect(url))
 
 
@@ -58,7 +81,7 @@ def discover(sessions, url):
     query = " ".join([base.get("brand", ""), base["model"]]) if base.get("model") else base["title"]
 
     def source(cls):
-        connector = cls()
+        connector = with_groq(cls())
         try:
             rows, failures = connector.search(query[:200], limit=1)
             ids = []

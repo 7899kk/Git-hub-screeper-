@@ -65,6 +65,7 @@ class ListingInput(BaseModel):
     availability: str = Field(default="unknown", pattern=r"^(in_stock|out_of_stock|unknown)$")
     timestamp: datetime
     source: str = Field(min_length=1, max_length=200)
+    price_evidence: str | None = Field(default=None, max_length=1000)
     image: str | None = None
     offers: list[str] = Field(default_factory=list, max_length=20)
     market: str = Field(default="IN", max_length=100)

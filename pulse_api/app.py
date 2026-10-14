@@ -100,7 +100,9 @@ def create_app(database_url=None):
         )
         data["stale"] = data["age_hours"] > 24
         data["affiliate"] = False
-        data["verification"] = "provider_observation"
+        data["verification"] = (
+            "page_excerpt" if data.get("price_evidence") else "provider_observation"
+        )
         return data
 
     def enqueue(s, url, kind="collect"):
@@ -146,6 +148,30 @@ def create_app(database_url=None):
         with sessions() as s:
             s.execute(select(Device).limit(1))
         return {"status": "ok", "mode": "live_only", "version": "2.0.0"}
+
+    @app.get("/providers/status")
+    def provider_status(_=Depends(owner)):
+        from .groq import DEFAULT_MODEL, key
+
+        return {
+            "groq": {
+                "configured": bool(key()),
+                "model": os.getenv("PULSE_GROQ_MODEL", DEFAULT_MODEL),
+                "message": (
+                    "Page extraction configured; live API access has not been checked."
+                    if key()
+                    else "Server Groq key is missing."
+                ),
+            },
+            "quickcommerce": {
+                "configured": bool(
+                    os.getenv("PULSE_QUICKCOMMERCE_KEY")
+                    and os.getenv("PULSE_QUICKCOMMERCE_SCHEMA_FILE")
+                    and Path(os.getenv("PULSE_QUICKCOMMERCE_SCHEMA_FILE")).is_file()
+                ),
+                "message": "A server key and reviewed response mapping are required for live grocery prices.",
+            },
+        }
 
     @app.post("/sessions", status_code=201)
     def register():

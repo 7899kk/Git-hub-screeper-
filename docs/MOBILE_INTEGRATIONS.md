@@ -64,6 +64,43 @@ Local grocery prices from different areas are not interchangeable. QuickCommerce
 by saved delivery area and background grocery refresh need a reviewed provider contract
 and explicit persistence/consent design; this release does not claim that capability.
 
+## Groq page extraction
+
+Configure `PULSE_GROQ_KEY` securely on the backend and worker (the standard
+`GROQ_API_KEY` is also supported when running outside Compose). Never put a Groq key
+in the app, GitHub Pages, or an `EXPO_PUBLIC_` variable. Create a key through Groq's
+official console: https://console.groq.com/keys. Optional `PULSE_GROQ_MODEL` defaults
+to `llama-3.3-70b-versatile`; choose a model available to your account that supports
+JSON object responses. The integration uses the official OpenAI-compatible
+chat completions contract documented in https://github.com/groq/groq-python.
+
+Groq runs only when a supported collector has fetched a permitted page but found
+no structured price. Existing robots, exact-host, redirect, size and challenge
+checks remain in force. Ambiguous structured products/offers and blocked pages
+never reach the fallback. Cross-retailer discovery uses this same extraction path.
+Only anonymous public product-page text is sent to Groq; shopping sessions and
+account cookies are not used.
+
+The fallback requires one product heading and one complete visible line explicitly
+labelled Selling price, Sale price, Our price, Deal price or Price with INR/₹/Rs.
+The server computes integer paise from that original line; AI cannot supply or alter
+the amount. Returned title, price quote and all supplied detail strings are checked
+against page text. Shipping needs a separate complete INR fee line; conditional
+offers remain quoted, never applied. Multiple prices, missing currency, fabricated
+fields, malformed/truncated model responses and provider failures create no observation.
+Quoted text is evidence, not independent verification of every extracted attribute;
+condition/stock remain unknown and AI-assisted results stay unverified for matching.
+
+The app shows the retained retailer price quote. History still starts with actual
+observations; Groq does not create past prices or predict future prices. A page that
+requires JavaScript, login, or lacks unambiguous evidence still needs an authorized
+API/feed. No universal coverage or complete delivery/discount details are claimed.
+
+`GET /providers/status` reports configuration only, without keys. It does not claim
+a successful live provider call. Current environment has no securely configured
+Groq key; automated tests use mock responses. GitHub Pages still requires a deployed
+HTTPS API, database and worker. Backend CORS must allow `https://7899kk.github.io`.
+
 ## ExtraPe
 
 The user identified `https://www.extrape.com/my-account`. This account page is not an API

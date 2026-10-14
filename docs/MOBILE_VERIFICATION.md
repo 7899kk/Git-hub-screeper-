@@ -8,7 +8,7 @@ publication remain blocked on the external prerequisites listed below.
 | Check | Observed result |
 | --- | --- |
 | Existing repository tests | 71 passed |
-| New FastAPI/domain/provider tests | 37 passed |
+| New FastAPI/domain/provider tests | 64 passed, including Groq grounding/failure checks with mock responses |
 | Mobile logic tests | 4 passed |
 | TypeScript typecheck | Passed |
 | ESLint | Passed |
@@ -23,6 +23,8 @@ publication remain blocked on the external prerequisites listed below.
 | Isolated product UI tests | Exact comparison, separate history/statistics/range selection, recommendation, save and target alert flows passed without runtime errors |
 | Real IKEA collection | Failed: egress proxy denied access with 403; no observation was created |
 | QuickCommerce live request | Unrun: secure key binding and reviewed response schema unavailable; domain denied by current runtime policy |
+| Groq live request | Unrun: no secure server key configured; API/docs domains saved in environment draft |
+| Groq provider configuration UI | Running API health/status and mobile browser passed; accurately reports missing keys without runtime errors |
 | ExtraPe integration | Unverified/unconfigured; no official app/affiliate API documentation available |
 | Expo Snack publication | Unrun; domain denied by current runtime policy |
 | Native debug APK compilation | Attempted; blocked fetching React Native 0.86.3 from repo.reactnative.dev (403) |

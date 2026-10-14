@@ -35,6 +35,11 @@ To connect actual prices, set the non-secret repository variable
 origin in backend `PULSE_CORS_ORIGINS`. Never use a provider key as a public repository
 variable or Expo public environment variable. GitHub Pages cannot host Python or PostgreSQL.
 
+Groq-assisted extraction is implemented in the backend. Settings shows provider
+configuration after connecting a live service, and product details show the actual
+retailer price quote. No Groq key is configured in this environment yet; no live
+Groq-price request has been verified. See [integration instructions](MOBILE_INTEGRATIONS.md#groq-page-extraction).
+
 Local reproducible build:
 
 ```sh
