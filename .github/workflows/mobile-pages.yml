@@ -1,4 +1,4 @@
-name: Publish mobile web preview
+name: Build mobile web preview
 on:
   push:
     branches: [main]
@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: mobile-pages
@@ -38,17 +36,8 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build:pages
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: pricepulse-github-pages
           path: mobile/dist/web
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy browser preview
-        id: deployment
-        uses: actions/deploy-pages@v4
+          include-hidden-files: true

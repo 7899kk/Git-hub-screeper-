@@ -1,5 +1,9 @@
 # PricePulse India
 
+**[Open the live app preview](https://7899kk.github.io/Git-hub-screeper-/)** · [Mobile source and setup](mobile/README.md)
+
+The browser preview is published on GitHub Pages. Actual prices require a connected live backend.
+
 Independent, mobile-first Indian shopping price collector and tracker. Original implementation; no third-party scraper repositories. Python 3.12+ standard library + SQLite + plain HTML/CSS/JavaScript. Includes an Android WebView client project.
 
 **Release status: runnable first release, not complete live coverage of all 18 stores.** All 18 independent connector modules pass structured-data contract tests. The initial name-search probe extracted an out-of-stock AJIO price. Follow-up direct-link tests verified IKEA and revealed/fixed malformed Croma JSON-LD. Live API/worker acceptance reports are in `docs/live-acceptance*.json`; transient failures are preserved. Installed connectors must not be mistaken for verified retailer coverage. See [live probe](docs/live-probe.json) and [coverage](docs/COVERAGE.md).

@@ -19,13 +19,16 @@ entry points, a 404 fallback for dynamic product routes, and `.nojekyll` for Exp
 It is the same React Native web app; no demo dataset is added. The retailer directory
 can display declared integrations with Setup required even before a backend is connected.
 
-The repository owner can enable **Settings → Pages → Build and deployment → Source →
-GitHub Actions**, then run **Actions → Publish mobile web preview → Run workflow**.
-The workflow's deployment output provides the actual website URL on success.
-The workflow also runs automatically after subsequent mobile changes on main.
+**Live preview:** https://7899kk.github.io/Git-hub-screeper-/
 
-For the already-exported `gh-pages` branch, the alternate setup is **Deploy from a branch →
-gh-pages → / (root) → Save**. Use one publication source at a time.
+The site is published from the `gh-pages` branch, root directory. Its public HTML and
+JavaScript returned HTTP 200, and its live onboarding, navigation, retailer directory,
+refresh and product-link screen were tested using verified HTTPS responses.
+
+The **Build mobile web preview** workflow checks the code and uploads a reusable
+`pricepulse-github-pages` artifact. It does not deploy from `main`, which GitHub's
+current Pages environment rules prohibit. Publish updated static files to `gh-pages`,
+the approved deployment branch. No environment protection rules were removed.
 
 To connect actual prices, set the non-secret repository variable
 `PRICEPULSE_PREVIEW_API_URL` to the deployed HTTPS FastAPI backend and allow the Pages
@@ -40,6 +43,7 @@ npm ci
 npm run build:pages
 ```
 
-The GitHub API and Pages hostname were initially denied by this cloud's network policy.
-A prepared artifact or Git push does not establish successful Pages deployment. Check
-the deployment status before treating the website as published.
+Publishing the `gh-pages` branch activated the repository's Pages site. The GitHub
+integration could not create the site or alter its environment rules through the API;
+the supported branch publishing route succeeded. The live browser preview remains
+separate from backend hosting and a signed Android release.

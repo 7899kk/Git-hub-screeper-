@@ -1,14 +1,15 @@
 # Mobile verification — 14 October 2026
 
 The new Expo application is live-only. There is no demo mode or release seed dataset.
-Nothing has been publicly hosted or submitted to an app store. Publication is blocked
-on the external prerequisites listed below.
+The browser preview has been published on GitHub Pages at
+https://7899kk.github.io/Git-hub-screeper-/. Backend hosting and signed Android/store
+publication remain blocked on the external prerequisites listed below.
 
 | Check | Observed result |
 | --- | --- |
 | Existing repository tests | 71 passed |
 | New FastAPI/domain/provider tests | 37 passed |
-| Mobile logic tests | 3 passed |
+| Mobile logic tests | 4 passed |
 | TypeScript typecheck | Passed |
 | ESLint | Passed |
 | New backend Ruff checks | Passed |
@@ -54,3 +55,10 @@ QuickCommerce key; provide official QuickCommerce response documentation or a sa
 response; provide ExtraPe integration documentation; deploy the actual HTTPS backend;
 rerun native compilation and device testing; configure signing, a public privacy policy
 and a support address. See MOBILE_RELEASE.md for build and deployment commands.
+
+GitHub publication: source pushed to main; tested static export pushed to gh-pages.
+GitHub reports the Pages site built. Public HTML and JavaScript returned HTTP 200.
+Live-site onboarding, home, retailer directory, route refresh and product input passed
+browser checks using verified HTTPS proxy responses; Chromium's separate CA trust
+was not bypassed. The build workflow retains install, type, lint, unit and export checks
+and packages the Pages artifact; publication uses the approved gh-pages branch.
