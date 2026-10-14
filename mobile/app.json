@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "PricePulse",
+    "slug": "pricepulse-android",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/pulse-icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#167456",
+        "foregroundImage": "./assets/pulse-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "in.pricepulse.mobile",
+      "versionCode": 1,
+      "permissions": [],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_CONTACTS",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "allowBackup": false
+    },
+    "web": {
+      "favicon": "./assets/pulse-icon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-sharing",
+        {
+          "android": {
+            "enabled": true,
+            "singleShareMimeTypes": [
+              "text/plain"
+            ]
+          },
+          "ios": {
+            "enabled": false
+          }
+        }
+      ]
+    ],
+    "scheme": "pricepulse",
+    "platforms": [
+      "android",
+      "web"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+.git
+.venv*
+**/node_modules
+mobile
+sites-app
+android
+data
+artifacts
+**/__pycache__
+**/.pytest_cache
+.env
+**/.env
+provider-config

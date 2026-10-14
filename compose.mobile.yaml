@@ -1,0 +1,58 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: pulse
+      POSTGRES_USER: pulse
+      POSTGRES_PASSWORD: ${PULSE_DB_PASSWORD:?Set a strong database password in secure deployment configuration}
+    volumes:
+      - pulse-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulse -d pulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  api:
+    build:
+      context: .
+      dockerfile: pulse_api/Dockerfile
+    environment: &api-environment
+      PULSE_DB_HOST: database
+      PULSE_DB_USER: pulse
+      PULSE_DB_PASSWORD: ${PULSE_DB_PASSWORD:?Required}
+      PULSE_DB_NAME: pulse
+      PULSE_CORS_ORIGINS: ${PULSE_CORS_ORIGINS:-https://your-web-preview.example}
+      PULSE_QUICKCOMMERCE_KEY: ${PULSE_QUICKCOMMERCE_KEY:-}
+      PULSE_QUICKCOMMERCE_SCHEMA_FILE: ${PULSE_QUICKCOMMERCE_SCHEMA_FILE:-}
+      PULSE_FEED_PATH: ${PULSE_FEED_PATH:-}
+      PULSE_FEED_URL: ${PULSE_FEED_URL:-}
+      PULSE_FEED_LICENSE: ${PULSE_FEED_LICENSE:-}
+      PULSE_FEED_TOKEN: ${PULSE_FEED_TOKEN:-}
+    ports:
+      - "127.0.0.1:8010:8010"
+    volumes:
+      - ./provider-config:/app/provider-config:ro
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 10
+    restart: unless-stopped
+  worker:
+    build:
+      context: .
+      dockerfile: pulse_api/Dockerfile
+    command: ["python", "-m", "pulse_api.worker"]
+    environment: *api-environment
+    volumes:
+      - ./provider-config:/app/provider-config:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  pulse-postgres:

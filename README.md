@@ -101,3 +101,9 @@ Open **History by year**, paste a product URL and choose a calendar year. Existi
 ### Use this repository as your app backend
 
 Authenticated collection, comparison and history endpoints are available under `/api/v1/`. See [connect your app](docs/CONNECT_YOUR_APP.md), [JavaScript SDK](sdk/pricepulse.mjs), and [reviewed PHP price-comparison repositories](docs/REPOSITORIES_REVIEWED.md). Deploy this code on a running server; GitHub alone does not serve a scraping API.
+
+## Android-first Expo application
+
+[View app screenshots on GitHub](docs/GITHUB_PREVIEW.md) · [GitHub Pages setup](docs/GITHUB_PREVIEW.md#interactive-github-pages-preview)
+
+A separate live-only React Native/TypeScript app and FastAPI/PostgreSQL service are now under `mobile/` and `pulse_api/`. Start with [mobile setup](mobile/README.md), [provider integrations](docs/MOBILE_INTEGRATIONS.md), [Android release instructions](docs/MOBILE_RELEASE.md), and [executed verification and blockers](docs/MOBILE_VERIFICATION.md). The mobile service uses a separate database and never seeds synthetic prices. Live integrations, signed Android release, and publication remain subject to the documented external prerequisites.

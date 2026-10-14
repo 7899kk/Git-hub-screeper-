@@ -11,3 +11,12 @@ android/.gradle/
 android/local.properties
 android/**/build/
 *.jks
+.venv-pulse/
+mobile/.expo/
+mobile/dist/
+mobile/android/
+mobile/ios/
+pulse_api/.pytest_cache/
+.ruff_cache/
+artifacts/
+pulse_api/vendor/*.whl

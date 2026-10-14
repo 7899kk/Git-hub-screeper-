@@ -1,0 +1,147 @@
+[
+  {
+    "id": "amazon",
+    "name": "Amazon",
+    "domains": [
+      "www.amazon.in",
+      "amazon.in"
+    ]
+  },
+  {
+    "id": "flipkart",
+    "name": "Flipkart",
+    "domains": [
+      "www.flipkart.com",
+      "flipkart.com",
+      "dl.flipkart.com"
+    ]
+  },
+  {
+    "id": "myntra",
+    "name": "Myntra",
+    "domains": [
+      "www.myntra.com",
+      "myntra.com"
+    ]
+  },
+  {
+    "id": "ajio",
+    "name": "Ajio",
+    "domains": [
+      "www.ajio.com",
+      "ajio.com"
+    ]
+  },
+  {
+    "id": "tatacliq",
+    "name": "Tata Cliq",
+    "domains": [
+      "www.tatacliq.com",
+      "tatacliq.com"
+    ]
+  },
+  {
+    "id": "meesho",
+    "name": "Meesho",
+    "domains": [
+      "www.meesho.com",
+      "meesho.com"
+    ]
+  },
+  {
+    "id": "snapdeal",
+    "name": "Snapdeal",
+    "domains": [
+      "www.snapdeal.com",
+      "snapdeal.com"
+    ]
+  },
+  {
+    "id": "jiomart",
+    "name": "Jiomart",
+    "domains": [
+      "www.jiomart.com",
+      "jiomart.com"
+    ]
+  },
+  {
+    "id": "croma",
+    "name": "Croma",
+    "domains": [
+      "www.croma.com",
+      "croma.com"
+    ]
+  },
+  {
+    "id": "reliancedigital",
+    "name": "Reliance Digital",
+    "domains": [
+      "www.reliancedigital.in",
+      "reliancedigital.in"
+    ]
+  },
+  {
+    "id": "vijaysales",
+    "name": "Vijay Sales",
+    "domains": [
+      "www.vijaysales.com",
+      "vijaysales.com"
+    ]
+  },
+  {
+    "id": "nykaa",
+    "name": "Nykaa",
+    "domains": [
+      "www.nykaa.com",
+      "nykaa.com"
+    ]
+  },
+  {
+    "id": "firstcry",
+    "name": "Firstcry",
+    "domains": [
+      "www.firstcry.com",
+      "firstcry.com"
+    ]
+  },
+  {
+    "id": "shoppersstop",
+    "name": "Shoppersstop",
+    "domains": [
+      "www.shoppersstop.com",
+      "shoppersstop.com"
+    ]
+  },
+  {
+    "id": "pepperfry",
+    "name": "Pepperfry",
+    "domains": [
+      "www.pepperfry.com",
+      "pepperfry.com"
+    ]
+  },
+  {
+    "id": "urbanladder",
+    "name": "Urbanladder",
+    "domains": [
+      "www.urbanladder.com",
+      "urbanladder.com"
+    ]
+  },
+  {
+    "id": "ikea",
+    "name": "Ikea",
+    "domains": [
+      "www.ikea.com",
+      "ikea.com"
+    ]
+  },
+  {
+    "id": "decathlon",
+    "name": "Decathlon",
+    "domains": [
+      "www.decathlon.in",
+      "decathlon.in"
+    ]
+  }
+]
