@@ -93,6 +93,7 @@ class Extracted(BaseModel):
     variant: dict[str, str] = Field(default_factory=dict, max_length=8)
     seller: str | None = Field(default=None, max_length=200)
     shipping_quote: str | None = Field(default=None, max_length=300)
+    mrp_quote: str | None = Field(default=None, max_length=300)
     offers: list[str] = Field(default_factory=list, max_length=10)
 
 
@@ -137,7 +138,8 @@ def extract(connector, html, url, transport=None):
                     "Never infer missing facts, calculate discounts, or use prior knowledge. "
                     "Omit unknown fields. Only colour, color, storage, size, ram, capacity "
                     "are allowed variant keys. shipping_quote must be the complete shipping "
-                    "line; offers must be complete quoted offer lines. No browsing or tools."
+                    "line; mrp_quote must be the complete explicitly labelled MRP line; "
+                    "offers must be complete quoted offer lines. No browsing or tools."
                 ),
             },
             {
@@ -195,6 +197,22 @@ def extract(connector, html, url, transport=None):
         raise CollectionError("groq_evidence", "Unknown variant attribute")
     if any(value not in page.lines for value in data.offers):
         raise CollectionError("groq_evidence", "Offers must quote complete retailer lines")
+    mrp = None
+    if data.mrp_quote:
+        mrp_match = re.fullmatch(
+            r"MRP\s*:\s*((?:₹|INR\b|Rs\.?)\s*\d[\d,]*(?:\.\d{1,2})?)",
+            data.mrp_quote,
+            flags=re.IGNORECASE,
+        )
+        if data.mrp_quote not in page.lines or not mrp_match:
+            raise CollectionError(
+                "groq_evidence", "MRP needs an explicitly labelled quoted INR amount"
+            )
+        mrp = money(mrp_match.group(1))
+        if mrp < price:
+            raise CollectionError(
+                "groq_evidence", "MRP is below selling price; source needs review"
+            )
     shipping = None
     if data.shipping_quote:
         shipping_match = re.fullmatch(
@@ -223,6 +241,7 @@ def extract(connector, html, url, transport=None):
         condition="unknown",
         availability="unknown",
         price=price,
+        mrp=mrp,
         shipping=shipping,
         seller=data.seller,
         offers=data.offers,

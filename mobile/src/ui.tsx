@@ -141,18 +141,18 @@ export function Empty({
   title,
   body,
   action,
+  actionLabel = "Explore retailers",
 }: {
   title: string;
   body: string;
   action?: () => void;
+  actionLabel?: string;
 }) {
   return (
     <Card>
       <Text style={s.subtitle}>{title}</Text>
       <Text style={s.body}>{body}</Text>
-      {action && (
-        <Button label="Explore retailers" secondary onPress={action} />
-      )}
+      {action && <Button label={actionLabel} secondary onPress={action} />}
     </Card>
   );
 }

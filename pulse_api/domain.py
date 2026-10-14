@@ -59,6 +59,7 @@ class ListingInput(BaseModel):
     variant: dict[str, str]
     condition: str = Field(pattern=r"^(new|refurbished|used|unknown)$")
     price: int = Field(gt=0, le=10**11, strict=True)
+    mrp: int | None = Field(default=None, gt=0, le=10**11, strict=True)
     currency: str = Field(default="INR", pattern="^INR$")
     shipping: int | None = Field(default=None, ge=0, strict=True)
     seller: str | None = Field(default=None, max_length=200)

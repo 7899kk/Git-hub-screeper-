@@ -38,6 +38,7 @@ def convert(connector, row):
         variant=row.variant,
         condition="unknown",
         price=row.price,
+        mrp=row.mrp,
         shipping=row.shipping,
         seller=row.seller or None,
         availability=row.availability

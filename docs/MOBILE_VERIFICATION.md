@@ -8,7 +8,7 @@ publication remain blocked on the external prerequisites listed below.
 | Check | Observed result |
 | --- | --- |
 | Existing repository tests | 71 passed |
-| New FastAPI/domain/provider tests | 64 passed, including Groq grounding/failure checks with mock responses |
+| New FastAPI/domain/provider tests | 65 passed, including Groq grounding/failure checks with mock responses |
 | Mobile logic tests | 4 passed |
 | TypeScript typecheck | Passed |
 | ESLint | Passed |

@@ -85,7 +85,8 @@ The fallback requires one product heading and one complete visible line explicit
 labelled Selling price, Sale price, Our price, Deal price or Price with INR/₹/Rs.
 The server computes integer paise from that original line; AI cannot supply or alter
 the amount. Returned title, price quote and all supplied detail strings are checked
-against page text. Shipping needs a separate complete INR fee line; conditional
+against page text. MRP needs its own labelled INR line and stays separate from the
+selling price. Shipping needs a separate complete INR fee line; conditional
 offers remain quoted, never applied. Multiple prices, missing currency, fabricated
 fields, malformed/truncated model responses and provider failures create no observation.
 Quoted text is evidence, not independent verification of every extracted attribute;

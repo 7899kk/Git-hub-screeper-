@@ -90,6 +90,7 @@ function Home() {
         <Empty
           title="Connect your live service"
           body="No demo prices or sample products. Configure your backend to start checking supported retailers."
+          actionLabel="Open Settings"
           action={() => router.push("/settings")}
         />
       )}
@@ -199,6 +200,7 @@ function Resolve() {
         <Empty
           title="Connect before checking prices"
           body="The live service fetches retailer pages and keeps provider keys private. Add its address in Settings."
+          actionLabel="Open Settings"
           action={() => router.push("/settings")}
         />
       )}

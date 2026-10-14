@@ -63,6 +63,7 @@ def test_price_from_page_and_details_separate():
     row = extract(PlatformConnector(), HTML, URL, mock_response())
     assert row.price == 1234567
     assert row.shipping == 5000
+    assert row.mrp is None
     assert row.price_evidence == DETAILS["price_quote"]
     assert row.offers == DETAILS["offers"]
     assert row.condition == "unknown" and row.availability == "unknown"
@@ -131,6 +132,17 @@ def test_free_shipping_and_oversized_provider_response():
     transport = httpx.MockTransport(lambda request: httpx.Response(200, content=b"x" * 65537))
     with pytest.raises(CollectionError, match="response exceeds"):
         extract(PlatformConnector(), HTML, URL, transport)
+
+
+def test_mrp_remains_separate_from_selling_price():
+    page = HTML + "<p>MRP: INR 15000.00</p>"
+    row = extract(
+        PlatformConnector(), page, URL, mock_response({**DETAILS, "mrp_quote": "MRP: INR 15000.00"})
+    )
+    assert row.mrp == 1500000 and row.price == 1234567
+    for quote in ["MRP: INR 1.00", "MRP: INR 25000.00"]:
+        with pytest.raises(CollectionError):
+            extract(PlatformConnector(), page, URL, mock_response({**DETAILS, "mrp_quote": quote}))
 
 
 def test_invalid_json_and_network_error_are_sanitized():

@@ -164,6 +164,7 @@ export function ProductScreen() {
               · {item.condition}
             </Text>
             <Text style={s.price}>{rupees(item.price)}</Text>
+            <Text style={s.body}>MRP: {rupees(item.mrp ?? null)}</Text>
             <Text style={s.body}>
               Source: {item.source} ·{" "}
               {new Date(item.timestamp).toLocaleString()} ·{" "}

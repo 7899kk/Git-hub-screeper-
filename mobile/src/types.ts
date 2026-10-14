@@ -14,6 +14,7 @@ export type Listing = {
   variant: Record<string, string>;
   condition: string;
   price: number;
+  mrp?: number | null;
   shipping: number | null;
   currency: string;
   seller: string | null;
